@@ -25,8 +25,25 @@ class TractProcessor extends AudioWorkletProcessor {
         this.tractSize = 44; // Default, will be updated from WASM once ready
         this.tractDiameters = new Array(this.tractSize).fill(1.5);
         
+        // Constrictions for fricatives and stops
+        this.constrictions = [];
+        
         // Audio generation state
         this.noiseSource = 0;
+        
+        // Stop consonant timing control
+        this.isStop = false;
+        this.stopPhase = 'none'; // 'none', 'silence', 'burst', 'sustain'
+        this.stopTiming = {
+            silenceBeforeBurst: 50, // ms
+            burstDuration: 20,      // ms
+            sustainDuration: 200    // ms
+        };
+        this.stopTimer = 0;         // ms
+        this.samplesSincePhaseChange = 0;
+        
+        // Keep track of original constrictions for burst phase
+        this.originalConstrictions = [];
         
         // Performance monitoring - using AudioWorklet's currentTime
         this.processingStartTime = 0;
@@ -63,6 +80,55 @@ class TractProcessor extends AudioWorkletProcessor {
                 this.updateTractShape();
             } else {
                 console.error(`Invalid tract diameters. Expected length ${this.tractSize}, got ${data.diameters?.length}`);
+            }
+        } else if (data.type === 'add-constriction') {
+            // Add a constriction for fricatives and stops
+            if (!wasmReady) {
+                console.warn('Cannot add constriction: WASM not ready');
+                return;
+            }
+            
+            // Store the constriction in our array
+            this.constrictions.push({
+                index: data.index,
+                diameter: data.diameter,
+                fricative: data.fricative
+            });
+            
+            console.log(`Added constriction at index ${data.index}, diameter ${data.diameter}, fricative ${data.fricative}`);
+        } else if (data.type === 'clear-constrictions') {
+            // Clear all constrictions
+            this.constrictions = [];
+            this.originalConstrictions = [];
+            console.log('Cleared all constrictions');
+        } else if (data.type === 'set-stop-consonant') {
+            // Handle the stop consonant timing properties
+            if (data.isStop) {
+                this.isStop = true;
+                // Set timing parameters
+                if (data.timing) {
+                    this.stopTiming = {
+                        silenceBeforeBurst: data.timing.silenceBeforeBurst || 50,
+                        burstDuration: data.timing.burstDuration || 20,
+                        sustainDuration: data.timing.sustainDuration || 200
+                    };
+                }
+                
+                // Save the original constrictions for later
+                this.originalConstrictions = JSON.parse(JSON.stringify(this.constrictions));
+                
+                // Start the stop consonant sequence
+                this.stopPhase = 'silence';
+                this.stopTimer = 0;
+                this.samplesSincePhaseChange = 0;
+                
+                console.log(`Starting stop consonant with timing: silence=${this.stopTiming.silenceBeforeBurst}ms, burst=${this.stopTiming.burstDuration}ms, sustain=${this.stopTiming.sustainDuration}ms`);
+            } else {
+                // Reset stop consonant state
+                this.isStop = false;
+                this.stopPhase = 'none';
+                this.stopTimer = 0;
+                this.originalConstrictions = [];
             }
         }
     }
@@ -344,6 +410,61 @@ class TractProcessor extends AudioWorkletProcessor {
     }
     
     /**
+     * Update the stop consonant phase based on elapsed time
+     */
+    updateStopConsonantPhase(samplesToProcess) {
+        if (!this.isStop || this.stopPhase === 'none') {
+            return;
+        }
+        
+        // Add the number of samples in this block to our counter
+        this.samplesSincePhaseChange += samplesToProcess;
+        
+        // Convert samples to milliseconds
+        const msElapsed = (this.samplesSincePhaseChange / sampleRate) * 1000;
+        
+        // Check if we need to transition to the next phase
+        if (this.stopPhase === 'silence' && msElapsed >= this.stopTiming.silenceBeforeBurst) {
+            // Transition from silence to burst
+            console.log('Stop consonant: Transitioning from silence to burst phase');
+            this.stopPhase = 'burst';
+            this.samplesSincePhaseChange = 0;
+            
+            // For the burst, add high turbulence noise by modifying constrictions
+            if (this.originalConstrictions.length > 0) {
+                this.constrictions = this.originalConstrictions.map(c => ({
+                    ...c,
+                    // During burst, add high turbulence
+                    fricative: 1.0
+                }));
+            }
+            
+        } else if (this.stopPhase === 'burst' && msElapsed >= this.stopTiming.burstDuration) {
+            // Transition from burst to sustain
+            console.log('Stop consonant: Transitioning from burst to sustain phase');
+            this.stopPhase = 'sustain';
+            this.samplesSincePhaseChange = 0;
+            
+            // For the sustain phase, restore normal constrictions (release)
+            if (this.originalConstrictions.length > 0) {
+                // Create a slightly open version of the original constrictions
+                this.constrictions = this.originalConstrictions.map(c => ({
+                    ...c,
+                    // Open up the constriction a bit for the sustain phase
+                    diameter: Math.max(0.1, c.diameter + 0.05),
+                    fricative: c.fricative * 0.5 // Reduce turbulence
+                }));
+            }
+            
+        } else if (this.stopPhase === 'sustain' && msElapsed >= this.stopTiming.sustainDuration) {
+            // End of stop consonant sequence
+            console.log('Stop consonant: Sequence complete');
+            this.isStop = false;
+            this.stopPhase = 'none';
+        }
+    }
+    
+    /**
      * Process a buffer of audio
      * This is called by the AudioWorklet system with output buffers to fill
      */
@@ -398,10 +519,22 @@ class TractProcessor extends AudioWorkletProcessor {
             const leftChannel = output[0];
             const rightChannel = output.length > 1 ? output[1] : null;
             
+            // Update stop consonant phase if needed
+            this.updateStopConsonantPhase(leftChannel.length);
+            
             // Process each sample
             for (let i = 0; i < leftChannel.length; i++) {
                 // Generate noise source (simple random noise)
                 this.noiseSource = Math.random() * 2 - 1;
+                
+                // For stop consonants in silence phase, output silence
+                if (this.isStop && this.stopPhase === 'silence') {
+                    leftChannel[i] = 0;
+                    if (rightChannel) {
+                        rightChannel[i] = 0;
+                    }
+                    continue;
+                }
                 
                 // Process through glottis
                 const glottalOutput = wasmExports.process_glottis(this.noiseSource);
@@ -411,36 +544,57 @@ class TractProcessor extends AudioWorkletProcessor {
                 
                 // Process through vocal tract with turbulence noise
                 const lambda = 1.0; // Time step factor
+                
+                // Apply any constrictions before processing the tract
+                if (this.constrictions.length > 0) {
+                    // Process each constriction to add turbulence noise
+                    for (const constriction of this.constrictions) {
+                        // If fricative value > 0, add turbulence noise
+                        if (constriction.fricative > 0) {
+                            // For stop consonants in burst phase, add extra noise
+                            const burstMultiplier = 
+                                (this.isStop && this.stopPhase === 'burst') ? 2.0 : 1.0;
+                                
+                            wasmExports.add_turbulence_noise(
+                                this.noiseSource * constriction.fricative * burstMultiplier,
+                                constriction.index,
+                                constriction.diameter,
+                                noiseModulator
+                            );
+                        }
+                    }
+                } else {
+                    // If no specific constrictions, add default noise at typical points
+                    // At teeth
+                    const teethPosition = Math.floor(this.tractSize * 0.8);
+                    wasmExports.add_turbulence_noise(
+                        this.noiseSource * 0.1,
+                        teethPosition,
+                        2.0, // Noise level for smaller constrictions 
+                        noiseModulator
+                    );
+                    
+                    // At lips
+                    const lipsPosition = this.tractSize - 1;
+                    wasmExports.add_turbulence_noise(
+                        this.noiseSource * 0.1,
+                        lipsPosition,
+                        2.0, // Noise level for smaller constrictions
+                        noiseModulator
+                    );
+                }
+                
+                // Process the tract
                 const tractOutput = wasmExports.process_tract(
                     glottalOutput, 
                     this.noiseSource, 
                     lambda
                 );
                 
-                // Add some turbulence noise at appropriate points
-                // (typically at constrictions in the tract)
-                let turbulenceNoise = this.noiseSource * 0.1;
-                
-                // At teeth
-                const teethPosition = Math.floor(this.tractSize * 0.8);
-                wasmExports.add_turbulence_noise(
-                    turbulenceNoise,
-                    teethPosition,
-                    2.0, // Noise level for smaller constrictions
-                    noiseModulator
-                );
-                
-                // At lips for fricatives
-                const lipsPosition = this.tractSize - 1;
-                wasmExports.add_turbulence_noise(
-                    turbulenceNoise,
-                    lipsPosition,
-                    2.0, // Noise level for smaller constrictions
-                    noiseModulator
-                );
-                
                 // Apply gain to make output more audible
-                const gainedOutput = tractOutput * 3.0;
+                // For burst phase, apply extra gain
+                const burstGain = (this.isStop && this.stopPhase === 'burst') ? 1.5 : 1.0;
+                const gainedOutput = tractOutput * 3.0 * burstGain;
                 
                 // Write output to buffer (both channels)
                 leftChannel[i] = gainedOutput;

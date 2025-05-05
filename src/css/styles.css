@@ -243,11 +243,17 @@ button.selected {
 }
 
 /* Extended vowel buttons */
-.vowel-buttons h3 {
+.vowel-buttons h3,
+.consonant-buttons h3 {
     margin-bottom: 15px;
     color: var(--primary-light);
     border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
     padding-bottom: 5px;
+}
+
+.vowel-buttons,
+.consonant-buttons {
+    margin-bottom: 20px;
 }
 
 #extendedVowels {
@@ -261,4 +267,36 @@ button.selected {
     padding: 8px 12px;
     background-color: var(--button-bg);
     flex: 0 0 auto;
+}
+
+/* Consonant button styling */
+.consonant-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+.phoneme-button {
+    background-color: var(--button-bg);
+    color: var(--text-color);
+    border: 1px solid var(--accent-color);
+    border-radius: 4px;
+    padding: 8px 16px;
+    margin: 5px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: 500;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.phoneme-button:hover {
+    background-color: var(--button-hover);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+    transform: translateY(-1px);
+}
+
+.phoneme-button.selected {
+    background-color: var(--accent-color);
+    color: black;
+    box-shadow: 0 2px 8px rgba(128, 203, 196, 0.4);
 }

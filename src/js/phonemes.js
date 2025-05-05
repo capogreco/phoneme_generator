@@ -137,8 +137,187 @@ export const extendedVowels = {
     }
 };
 
+// Basic consonant configurations
+// For consonants, we define the vocal tract shape (diameters) and additional parameters:
+// - constrictions: array of {index, diameter, fricative} for specific points of constriction
+// - voiced: whether the consonant is voiced (true) or unvoiced (false)
+// - timing: parameters to control articulation timing for stops and fricatives
+//   - silenceBeforeBurst: milliseconds of silence before the release burst (for stops)
+//   - burstDuration: milliseconds for the release burst phase
+//   - sustainDuration: milliseconds for the sustained phase after the burst
+export const basicConsonants = {
+    // 'p' as in "pan" - Bilabial stop (complete closure at the lips)
+    'p': {
+        ipaSymbol: 'p',
+        example: 'pan',
+        description: 'Voiceless bilabial stop',
+        // Based on schwa with closed lips
+        diameters: [0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.1, 0.0],
+        constrictions: [
+            { index: 43, diameter: 0.0, fricative: 0.0 } // Complete closure at lips
+        ],
+        voiced: false,
+        timing: {
+            silenceBeforeBurst: 50, // 50ms of silence before burst
+            burstDuration: 20,      // 20ms of burst
+            sustainDuration: 200    // 200ms of sustained sound
+        },
+        isStop: true
+    },
+    
+    // 'b' as in "ban" - Voiced bilabial stop
+    'b': {
+        ipaSymbol: 'b',
+        example: 'ban',
+        description: 'Voiced bilabial stop',
+        // Same as 'p' but voiced
+        diameters: [0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.1, 0.0],
+        constrictions: [
+            { index: 43, diameter: 0.0, fricative: 0.0 } // Complete closure at lips
+        ],
+        voiced: true,
+        timing: {
+            silenceBeforeBurst: 30, // Voiced stops have shorter silence
+            burstDuration: 20,
+            sustainDuration: 200
+        },
+        isStop: true
+    },
+    
+    // 't' as in "tan" - Alveolar stop
+    't': {
+        ipaSymbol: 't',
+        example: 'tan',
+        description: 'Voiceless alveolar stop',
+        // Closure at the alveolar ridge
+        diameters: [0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.1, 0.0, 0.0, 0.1, 0.3, 0.5, 0.8, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
+        constrictions: [
+            { index: 26, diameter: 0.0, fricative: 0.0 } // Complete closure at alveolar ridge
+        ],
+        voiced: false,
+        timing: {
+            silenceBeforeBurst: 50,
+            burstDuration: 15,
+            sustainDuration: 200
+        },
+        isStop: true
+    },
+    
+    // 'd' as in "dan" - Voiced alveolar stop
+    'd': {
+        ipaSymbol: 'd',
+        example: 'dan',
+        description: 'Voiced alveolar stop',
+        // Same as 't' but voiced
+        diameters: [0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.1, 0.0, 0.0, 0.1, 0.3, 0.5, 0.8, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
+        constrictions: [
+            { index: 26, diameter: 0.0, fricative: 0.0 } // Complete closure at alveolar ridge
+        ],
+        voiced: true,
+        timing: {
+            silenceBeforeBurst: 30,
+            burstDuration: 15,
+            sustainDuration: 200
+        },
+        isStop: true
+    },
+    
+    // 'k' as in "can" - Velar stop
+    'k': {
+        ipaSymbol: 'k',
+        example: 'can',
+        description: 'Voiceless velar stop',
+        // Closure at the velum (soft palate)
+        diameters: [0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 1.0, 1.0, 1.0, 1.0, 0.1, 0.0, 0.0, 0.1, 0.3, 0.6, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
+        constrictions: [
+            { index: 15, diameter: 0.0, fricative: 0.0 } // Complete closure at velum
+        ],
+        voiced: false,
+        timing: {
+            silenceBeforeBurst: 50,
+            burstDuration: 25,
+            sustainDuration: 200
+        },
+        isStop: true
+    },
+    
+    // 'g' as in "gain" - Voiced velar stop
+    'g': {
+        ipaSymbol: 'g',
+        example: 'gain',
+        description: 'Voiced velar stop',
+        // Same as 'k' but voiced
+        diameters: [0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 1.0, 1.0, 1.0, 1.0, 0.1, 0.0, 0.0, 0.1, 0.3, 0.6, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
+        constrictions: [
+            { index: 15, diameter: 0.0, fricative: 0.0 } // Complete closure at velum
+        ],
+        voiced: true,
+        timing: {
+            silenceBeforeBurst: 30,
+            burstDuration: 25,
+            sustainDuration: 200
+        },
+        isStop: true
+    },
+    
+    // 'f' as in "fan" - Labiodental fricative
+    'f': {
+        ipaSymbol: 'f',
+        example: 'fan',
+        description: 'Voiceless labiodental fricative',
+        // Narrow constriction between lower lip and upper teeth
+        diameters: [0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.3, 0.2, 0.1],
+        constrictions: [
+            { index: 42, diameter: 0.1, fricative: 0.8 } // Narrow opening with high turbulence at labiodental area
+        ],
+        voiced: false
+    },
+    
+    // 'v' as in "van" - Voiced labiodental fricative
+    'v': {
+        ipaSymbol: 'v',
+        example: 'van',
+        description: 'Voiced labiodental fricative',
+        // Same as 'f' but voiced
+        diameters: [0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.3, 0.2, 0.1],
+        constrictions: [
+            { index: 42, diameter: 0.1, fricative: 0.8 } // Narrow opening with high turbulence at labiodental area
+        ],
+        voiced: true
+    },
+    
+    // 's' as in "sun" - Alveolar fricative
+    's': {
+        ipaSymbol: 's',
+        example: 'sun',
+        description: 'Voiceless alveolar fricative',
+        // Narrow constriction at the alveolar ridge
+        diameters: [0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.3, 0.2, 0.1, 0.2, 0.3, 0.5, 0.8, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
+        constrictions: [
+            { index: 27, diameter: 0.1, fricative: 1.0 } // Narrow opening with high turbulence at alveolar ridge
+        ],
+        voiced: false
+    },
+    
+    // 'z' as in "zip" - Voiced alveolar fricative
+    'z': {
+        ipaSymbol: 'z',
+        example: 'zip',
+        description: 'Voiced alveolar fricative',
+        // Same as 's' but voiced
+        diameters: [0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.3, 0.2, 0.1, 0.2, 0.3, 0.5, 0.8, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
+        constrictions: [
+            { index: 27, diameter: 0.1, fricative: 1.0 } // Narrow opening with high turbulence at alveolar ridge
+        ],
+        voiced: true
+    }
+};
+
 // Combine basic and extended vowels for easy access
 export const allVowels = { ...basicVowels, ...extendedVowels };
+
+// Combine all phonemes
+export const allPhonemes = { ...allVowels, ...basicConsonants };
 
 /**
  * Helper function to resize a phoneme configuration to match the tract size
@@ -165,11 +344,44 @@ export function resizePhonemeConfig(diameters, targetSize) {
  * Utility to get phoneme configuration by name
  * @param {string} name - The phoneme name
  * @param {number} tractSize - The desired tract size
- * @returns {Array|null} - Resized diameter array or null if not found
+ * @returns {Object|null} - Phoneme configuration or null if not found
  */
 export function getPhonemeConfig(name, tractSize) {
-    const phoneme = allVowels[name];
+    const phoneme = allPhonemes[name];
     if (!phoneme) return null;
     
-    return resizePhonemeConfig(phoneme.diameters, tractSize);
+    // Create a copy of the phoneme configuration
+    const config = {
+        diameters: resizePhonemeConfig(phoneme.diameters, tractSize)
+    };
+    
+    // Add consonant-specific properties if they exist
+    if (phoneme.constrictions) {
+        // Scale the constriction indices to match the target tract size
+        config.constrictions = phoneme.constrictions.map(constriction => {
+            const scaledIndex = Math.floor((constriction.index / phoneme.diameters.length) * tractSize);
+            return {
+                index: scaledIndex,
+                diameter: constriction.diameter,
+                fricative: constriction.fricative
+            };
+        });
+    }
+    
+    // Copy voiced property if it exists
+    if (phoneme.voiced !== undefined) {
+        config.voiced = phoneme.voiced;
+    }
+    
+    // Copy stop/plosive properties if they exist
+    if (phoneme.isStop !== undefined) {
+        config.isStop = phoneme.isStop;
+    }
+    
+    // Copy timing parameters if they exist
+    if (phoneme.timing) {
+        config.timing = { ...phoneme.timing };
+    }
+    
+    return config;
 }

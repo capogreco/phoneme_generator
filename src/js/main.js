@@ -3,7 +3,7 @@
  * This module handles audio initialization, UI setup, and WASM loading
  */
 
-import { allVowels, getPhonemeConfig } from './phonemes.js';
+import { allVowels, basicConsonants, getPhonemeConfig } from './phonemes.js';
 import { PhonemeGenerator } from './phoneme-generator.js';
 
 class PhonemeApp {
@@ -57,6 +57,14 @@ class PhonemeApp {
             button.addEventListener('click', (e) => {
                 const vowel = e.target.dataset.vowel;
                 this.selectVowel(vowel);
+            });
+        });
+        
+        // Consonant buttons
+        document.querySelectorAll('.phoneme-button[data-phoneme]').forEach(button => {
+            button.addEventListener('click', (e) => {
+                const phoneme = e.target.dataset.phoneme;
+                this.selectPhoneme(phoneme);
             });
         });
         
@@ -219,17 +227,59 @@ class PhonemeApp {
             this.drawTractShape(diameters);
         }
         
-        // Update UI to highlight the selected vowel
+        // Update UI to highlight the selected vowel and clear any selected consonants
+        document.querySelectorAll('.vowel-button, .phoneme-button').forEach(button => {
+            button.classList.remove('selected');
+        });
+        
         document.querySelectorAll('.vowel-button').forEach(button => {
             if (button.dataset.vowel === vowelName) {
                 button.classList.add('selected');
-            } else {
-                button.classList.remove('selected');
             }
         });
         
         // Update status
         this.updateStatus(`Selected vowel: ${vowel.ipaSymbol} (${vowel.example})`);
+    }
+    
+    /**
+     * Select a consonant phoneme by name
+     * @param {string} phonemeName - Name of the consonant to select
+     */
+    selectPhoneme(phonemeName) {
+        if (!this.isReady || !this.phonemeGenerator) {
+            this.updateStatus('Not ready. Click Start Audio first.');
+            return;
+        }
+        
+        // Get phoneme from allPhonemes (imported from phonemes.js)
+        const phoneme = basicConsonants[phonemeName];
+        if (!phoneme) {
+            console.error(`Phoneme ${phonemeName} not found`);
+            return;
+        }
+        
+        // Set the tract shape for this phoneme
+        const diameters = this.phonemeGenerator.setPhoneme(phonemeName);
+        
+        // Draw the tract shape
+        if (diameters) {
+            this.drawTractShape(diameters);
+        }
+        
+        // Update UI to highlight the selected consonant and clear any selected vowels
+        document.querySelectorAll('.vowel-button, .phoneme-button').forEach(button => {
+            button.classList.remove('selected');
+        });
+        
+        document.querySelectorAll('.phoneme-button').forEach(button => {
+            if (button.dataset.phoneme === phonemeName) {
+                button.classList.add('selected');
+            }
+        });
+        
+        // Update status
+        this.updateStatus(`Selected consonant: ${phoneme.ipaSymbol} (${phoneme.example})`);
     }
     
     /**

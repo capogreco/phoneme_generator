@@ -6,7 +6,7 @@
  * a simple interface for controlling phoneme parameters.
  */
 
-import { allVowels, getPhonemeConfig } from './phonemes.js';
+import { allVowels, allPhonemes, getPhonemeConfig } from './phonemes.js';
 
 export class PhonemeGenerator {
     constructor(audioContext) {
@@ -211,37 +211,78 @@ export class PhonemeGenerator {
     /**
      * Set a phoneme by name
      * @param {string} name - The phoneme name to use
+     * @returns {Array|null} - The diameters array for visualization, or null on error
      */
     setPhoneme(name) {
         if (!this.isInitialized || !this.workletNode) {
             console.warn('Cannot set phoneme, PhonemeGenerator not initialized');
-            return false;
+            return null;
         }
         
-        const phoneme = allVowels[name];
+        const phoneme = allPhonemes[name];
         if (!phoneme) {
             console.error(`Phoneme ${name} not found`);
-            return false;
+            return null;
         }
         
         // Get tract configuration for this phoneme
-        const diameters = getPhonemeConfig(name, this.tractSize);
-        if (!diameters) {
+        const config = getPhonemeConfig(name, this.tractSize);
+        if (!config) {
             console.error(`Failed to get configuration for phoneme ${name}`);
-            return false;
+            return null;
         }
         
-        // Send to AudioWorklet
+        // Send diameter configuration to AudioWorklet
         this.workletNode.port.postMessage({
             type: 'tract-diameters',
-            diameters
+            diameters: config.diameters
         });
+        
+        // Handle consonant-specific properties
+        
+        // First, clear any existing constrictions
+        this.workletNode.port.postMessage({
+            type: 'clear-constrictions'
+        });
+        
+        // Set voicing if specified
+        if (config.voiced !== undefined) {
+            this.setVoiced(config.voiced);
+        }
+        
+        // Add any constrictions for fricatives or stops
+        if (config.constrictions && config.constrictions.length > 0) {
+            for (const constriction of config.constrictions) {
+                this.workletNode.port.postMessage({
+                    type: 'add-constriction',
+                    index: constriction.index,
+                    diameter: constriction.diameter,
+                    fricative: constriction.fricative
+                });
+            }
+        }
+        
+        // Handle stop consonant timing
+        if (config.isStop) {
+            console.log(`Setting stop consonant ${name} with timing:`, config.timing);
+            this.workletNode.port.postMessage({
+                type: 'set-stop-consonant',
+                isStop: true,
+                timing: config.timing
+            });
+        } else {
+            // Make sure to turn off stop consonant mode if not a stop
+            this.workletNode.port.postMessage({
+                type: 'set-stop-consonant',
+                isStop: false
+            });
+        }
         
         // Store current phoneme
         this.currentPhoneme = name;
         
         // Return the diameters for visualization
-        return diameters;
+        return config.diameters;
     }
     
     /**
