@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phoneme Generator</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Phoneme Generator</h1>
+            <div id="statusContainer">
+                <span>Status: </span><span id="statusMessage">Loading...</span>
+            </div>
+        </header>
+
+        <div class="controls-container">
+            <div class="control-group">
+                <h2>Voice Controls</h2>
+                <div class="control">
+                    <label for="frequencySlider">Frequency (Hz): <span id="frequencyValue">140</span></label>
+                    <input type="range" id="frequencySlider" min="80" max="400" value="140" step="1">
+                </div>
+                
+                <div class="control">
+                    <label for="tensenessSlider">Tenseness: <span id="tensenessValue">0.6</span></label>
+                    <input type="range" id="tensenessSlider" min="0" max="1" value="0.6" step="0.01">
+                </div>
+                
+                <div class="control">
+                    <label for="voicingToggle">Voicing:</label>
+                    <input type="checkbox" id="voicingToggle" checked>
+                </div>
+                
+                <div class="control">
+                    <label for="velumSlider">Velum Opening: <span id="velumValue">0.01</span></label>
+                    <input type="range" id="velumSlider" min="0.01" max="0.4" value="0.01" step="0.01">
+                </div>
+            </div>
+            
+            <div class="control-group">
+                <h2>Phoneme Selection</h2>
+                <div class="vowel-buttons">
+                    <h3>Basic Vowels</h3>
+                    <button class="vowel-button" data-vowel="a">a (father)</button>
+                    <button class="vowel-button" data-vowel="e">e (bet)</button>
+                    <button class="vowel-button" data-vowel="i">i (meet)</button>
+                    <button class="vowel-button" data-vowel="o">o (boat)</button>
+                    <button class="vowel-button" data-vowel="u">u (boot)</button>
+                </div>
+                
+                <div id="extendedVowels" class="vowel-buttons">
+                    <h3>Extended Vowels</h3>
+                    <!-- Will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+        
+        <div class="visualization">
+            <h2>Tract Visualization</h2>
+            <canvas id="tractCanvas" width="600" height="200"></canvas>
+        </div>
+        
+        <div class="action-buttons">
+            <button id="startButton">Start Audio</button>
+            <button id="stopButton" disabled>Stop</button>
+        </div>
+        
+        <div class="info-panel">
+            <h3>Performance</h3>
+            <div>Sample Rate: <span id="sampleRate">-</span> Hz</div>
+            <div>CPU Load: <span id="cpuLoad">-</span></div>
+            <div>Processing Time: <span id="processingTime">-</span></div>
+        </div>
+    </div>
+
+    <script type="module" src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir:*)",
+      "Bash(cp:*)",
+      "Bash(/Users/capo_greco/Documents/phoneme_generator/src/*)",
+      "Bash(/Users/capo_greco/Documents/phoneme_generator/dist/)",
+      "Bash(deno task:*)",
+      "Bash(grep:*)"
+    ],
+    "deny": []
+  }
+}
