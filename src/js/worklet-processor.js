@@ -96,10 +96,31 @@ class TractProcessor extends AudioWorkletProcessor {
             });
             
             console.log(`Added constriction at index ${data.index}, diameter ${data.diameter}, fricative ${data.fricative}`);
+        } else if (data.type === 'add-after-burst-constriction') {
+            // Add a constriction for the after-burst phase of affricates
+            if (!wasmReady) {
+                console.warn('Cannot add after-burst constriction: WASM not ready');
+                return;
+            }
+            
+            // Initialize the after-burst constrictions array if not exists
+            if (!this.afterBurstConstrictions) {
+                this.afterBurstConstrictions = [];
+            }
+            
+            // Store the constriction
+            this.afterBurstConstrictions.push({
+                index: data.index,
+                diameter: data.diameter,
+                fricative: data.fricative
+            });
+            
+            console.log(`Added after-burst constriction at index ${data.index}, diameter ${data.diameter}, fricative ${data.fricative}`);
         } else if (data.type === 'clear-constrictions') {
             // Clear all constrictions
             this.constrictions = [];
             this.originalConstrictions = [];
+            this.afterBurstConstrictions = [];
             console.log('Cleared all constrictions');
         } else if (data.type === 'set-stop-consonant') {
             // Handle the stop consonant timing properties
@@ -117,6 +138,13 @@ class TractProcessor extends AudioWorkletProcessor {
                 // Save the original constrictions for later
                 this.originalConstrictions = JSON.parse(JSON.stringify(this.constrictions));
                 
+                // Store after-burst constrictions if provided
+                if (data.afterBurstConstrictions) {
+                    this.afterBurstConstrictions = data.afterBurstConstrictions;
+                } else {
+                    this.afterBurstConstrictions = null;
+                }
+                
                 // Start the stop consonant sequence
                 this.stopPhase = 'silence';
                 this.stopTimer = 0;
@@ -129,7 +157,23 @@ class TractProcessor extends AudioWorkletProcessor {
                 this.stopPhase = 'none';
                 this.stopTimer = 0;
                 this.originalConstrictions = [];
+                this.afterBurstConstrictions = null;
             }
+        } else if (data.type === 'set-velum-opening') {
+            // Set the velum opening (for nasal consonants)
+            if (!wasmReady) {
+                console.warn('Cannot set velum opening: WASM not ready');
+                return;
+            }
+            
+            const velumOpening = data.velumOpening || 0.01;
+            console.log(`Setting velum opening to ${velumOpening}`);
+            wasmExports.set_velum(velumOpening);
+        } else if (data.type === 'set-approximant') {
+            // Handle approximant consonant properties
+            // Approximants are handled through their constrictions
+            // but might need special handling in the future
+            console.log('Setting approximant mode');
         }
     }
     
@@ -439,15 +483,28 @@ class TractProcessor extends AudioWorkletProcessor {
                 }));
             }
             
+            // For affricates, apply the after-burst constrictions if available
+            if (this.afterBurstConstrictions && this.afterBurstConstrictions.length > 0) {
+                this.constrictions = this.afterBurstConstrictions;
+            }
+            
         } else if (this.stopPhase === 'burst' && msElapsed >= this.stopTiming.burstDuration) {
             // Transition from burst to sustain
             console.log('Stop consonant: Transitioning from burst to sustain phase');
             this.stopPhase = 'sustain';
             this.samplesSincePhaseChange = 0;
             
-            // For the sustain phase, restore normal constrictions (release)
-            if (this.originalConstrictions.length > 0) {
-                // Create a slightly open version of the original constrictions
+            // For affricates, keep using the after-burst constrictions
+            if (this.afterBurstConstrictions && this.afterBurstConstrictions.length > 0) {
+                // Keep the fricative constrictions but adjust their parameters
+                this.constrictions = this.afterBurstConstrictions.map(c => ({
+                    ...c,
+                    // Slightly reduce the fricative intensity for the sustain phase
+                    fricative: c.fricative * 0.8
+                }));
+            } 
+            // For regular stops, create a slightly open version of the original constrictions
+            else if (this.originalConstrictions.length > 0) {
                 this.constrictions = this.originalConstrictions.map(c => ({
                     ...c,
                     // Open up the constriction a bit for the sustain phase

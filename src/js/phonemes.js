@@ -310,6 +310,228 @@ export const basicConsonants = {
             { index: 27, diameter: 0.1, fricative: 1.0 } // Narrow opening with high turbulence at alveolar ridge
         ],
         voiced: true
+    },
+    
+    // Additional fricatives
+    
+    // 'ʃ' as in "ship" - Voiceless postalveolar fricative
+    'sh': {
+        ipaSymbol: 'ʃ',
+        example: 'ship',
+        description: 'Voiceless postalveolar fricative',
+        // Like 's' but with a different tongue position - more retracted
+        diameters: [0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.5, 0.3, 0.1, 0.15, 0.2, 0.4, 0.8, 1.1, 1.2, 1.2, 1.2, 1.2, 1.2, 1.2, 1.2, 1.2, 1.2, 1.2, 1.2, 1.2],
+        constrictions: [
+            { index: 25, diameter: 0.1, fricative: 1.0 } // Constriction at the postalveolar region
+        ],
+        voiced: false
+    },
+    
+    // 'ʒ' as in "measure" - Voiced postalveolar fricative
+    'zh': {
+        ipaSymbol: 'ʒ',
+        example: 'measure',
+        description: 'Voiced postalveolar fricative',
+        // Same as 'ʃ' but voiced
+        diameters: [0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.5, 0.3, 0.1, 0.15, 0.2, 0.4, 0.8, 1.1, 1.2, 1.2, 1.2, 1.2, 1.2, 1.2, 1.2, 1.2, 1.2, 1.2, 1.2, 1.2],
+        constrictions: [
+            { index: 25, diameter: 0.1, fricative: 1.0 } // Constriction at the postalveolar region
+        ],
+        voiced: true
+    },
+    
+    // 'θ' as in "thin" - Voiceless dental fricative
+    'th': {
+        ipaSymbol: 'θ',
+        example: 'thin',
+        description: 'Voiceless dental fricative',
+        // Tongue tip between teeth
+        diameters: [0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1, 0.05, 0.1, 0.2, 0.3, 0.5, 0.7, 0.9],
+        constrictions: [
+            { index: 37, diameter: 0.05, fricative: 0.8 } // Narrow opening between teeth
+        ],
+        voiced: false
+    },
+    
+    // 'ð' as in "this" - Voiced dental fricative
+    'dh': {
+        ipaSymbol: 'ð',
+        example: 'this',
+        description: 'Voiced dental fricative',
+        // Same as 'θ' but voiced
+        diameters: [0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1, 0.05, 0.1, 0.2, 0.3, 0.5, 0.7, 0.9],
+        constrictions: [
+            { index: 37, diameter: 0.05, fricative: 0.8 } // Narrow opening between teeth
+        ],
+        voiced: true
+    },
+    
+    // 'h' as in "hat" - Voiceless glottal fricative
+    'h': {
+        ipaSymbol: 'h',
+        example: 'hat',
+        description: 'Voiceless glottal fricative',
+        // The constriction is at the glottis (beginning of the tract)
+        // Otherwise, keep the tract neutral 
+        diameters: [0.6, 0.6, 0.6, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
+        constrictions: [
+            { index: 0, diameter: 0.1, fricative: 1.0 } // Constriction at the glottis
+        ],
+        voiced: false
+    },
+    
+    // Nasal consonants
+    
+    // 'm' as in "man" - Bilabial nasal
+    'm': {
+        ipaSymbol: 'm',
+        example: 'man',
+        description: 'Bilabial nasal',
+        // Similar to 'b' but with open velum
+        diameters: [0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.1, 0.0],
+        constrictions: [
+            { index: 43, diameter: 0.0, fricative: 0.0 } // Complete closure at lips
+        ],
+        voiced: true,
+        nasal: true,
+        velumOpening: 0.4
+    },
+    
+    // 'n' as in "no" - Alveolar nasal
+    'n': {
+        ipaSymbol: 'n',
+        example: 'no',
+        description: 'Alveolar nasal',
+        // Similar to 'd' but with open velum
+        diameters: [0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.1, 0.0, 0.0, 0.1, 0.3, 0.5, 0.8, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
+        constrictions: [
+            { index: 26, diameter: 0.0, fricative: 0.0 } // Complete closure at alveolar ridge
+        ],
+        voiced: true,
+        nasal: true,
+        velumOpening: 0.4
+    },
+    
+    // 'ŋ' as in "sing" - Velar nasal
+    'ng': {
+        ipaSymbol: 'ŋ',
+        example: 'sing',
+        description: 'Velar nasal',
+        // Similar to 'g' but with open velum
+        diameters: [0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 1.0, 1.0, 1.0, 1.0, 0.1, 0.0, 0.0, 0.1, 0.3, 0.6, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
+        constrictions: [
+            { index: 15, diameter: 0.0, fricative: 0.0 } // Complete closure at velum
+        ],
+        voiced: true,
+        nasal: true,
+        velumOpening: 0.4
+    },
+    
+    // Approximants and semi-vowels
+    
+    // 'l' as in "light" - Lateral approximant
+    'l': {
+        ipaSymbol: 'l',
+        example: 'light',
+        description: 'Alveolar lateral approximant',
+        // Tongue tip at alveolar ridge, but with sides lowered
+        diameters: [0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.3, 0.25, 0.2, 0.2, 0.4, 0.8, 1.0, 1.2, 1.2, 1.2, 1.2, 1.2, 1.2, 1.2, 1.2, 1.2, 1.2, 1.2, 1.2],
+        constrictions: [
+            { index: 26, diameter: 0.2, fricative: 0.0 } // Partial closure at alveolar ridge
+        ],
+        voiced: true,
+        approximant: true
+    },
+    
+    // 'r' as in "red" - Approximant (American English 'r')
+    'r': {
+        ipaSymbol: 'ɹ',
+        example: 'red',
+        description: 'Alveolar approximant',
+        // Retroflexed tongue position
+        diameters: [0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.8, 0.6, 0.4, 0.35, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.4, 0.7, 1.0, 1.1, 1.1, 1.1, 1.1, 1.1, 1.1, 1.1, 1.1, 1.1, 1.1, 1.1, 1.1],
+        constrictions: [
+            { index: 24, diameter: 0.3, fricative: 0.0 } // Partial constriction for approximant
+        ],
+        voiced: true,
+        approximant: true
+    },
+    
+    // 'w' as in "win" - Labial-velar approximant
+    'w': {
+        ipaSymbol: 'w',
+        example: 'win',
+        description: 'Labial-velar approximant',
+        // Combined lip rounding and velar constriction, similar to 'u'
+        diameters: [0.6, 0.6, 0.6, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.3, 0.3, 0.3, 0.4, 0.5, 0.6, 0.6, 0.6, 0.6, 0.6, 0.6, 0.6, 0.6, 0.6, 0.6, 0.6, 0.6, 0.6, 0.6, 0.6, 0.6, 0.6, 0.6, 0.3, 0.2, 0.1, 0.05, 0.05],
+        constrictions: [
+            { index: 15, diameter: 0.3, fricative: 0.0 }, // Velar constriction
+            { index: 43, diameter: 0.05, fricative: 0.0 }  // Lip rounding
+        ],
+        voiced: true,
+        approximant: true
+    },
+    
+    // 'j' as in "yes" - Palatal approximant
+    'j': {
+        ipaSymbol: 'j',
+        example: 'yes',
+        description: 'Palatal approximant',
+        // Similar to 'i' vowel but more constricted
+        diameters: [0.6, 0.6, 0.6, 0.6, 0.6, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.2, 0.2, 0.3, 0.4, 0.8, 1.0, 1.2, 1.3, 1.3, 1.3, 1.3, 1.3, 1.3, 1.3, 1.4, 1.4, 1.5, 1.6, 1.7, 1.7, 1.7, 1.7, 1.7, 1.7, 1.7, 1.7, 1.7, 1.7],
+        constrictions: [
+            { index: 15, diameter: 0.2, fricative: 0.0 }  // Constriction at the palate
+        ],
+        voiced: true,
+        approximant: true
+    },
+    
+    // Affricates (combination of stop + fricative)
+    
+    // 'tʃ' as in "chair" - Voiceless postalveolar affricate
+    'ch': {
+        ipaSymbol: 'tʃ',
+        example: 'chair',
+        description: 'Voiceless postalveolar affricate',
+        // Similar to 't' followed by 'ʃ'
+        diameters: [0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.5, 0.3, 0.1, 0.1, 0.2, 0.4, 0.8, 1.1, 1.2, 1.2, 1.2, 1.2, 1.2, 1.2, 1.2, 1.2, 1.2, 1.2, 1.2, 1.2],
+        constrictions: [
+            { index: 26, diameter: 0.0, fricative: 0.0 } // Complete closure at alveolar/postalveolar region
+        ],
+        voiced: false,
+        isStop: true,
+        timing: {
+            silenceBeforeBurst: 30,
+            burstDuration: 20,
+            sustainDuration: 200
+        },
+        // After burst, transition to fricative
+        afterBurstConstrictions: [
+            { index: 26, diameter: 0.1, fricative: 1.0 } // Fricative constriction after burst
+        ]
+    },
+    
+    // 'dʒ' as in "job" - Voiced postalveolar affricate
+    'j-stop': {
+        ipaSymbol: 'dʒ',
+        example: 'job',
+        description: 'Voiced postalveolar affricate',
+        // Similar to 'd' followed by 'ʒ'
+        diameters: [0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.5, 0.3, 0.1, 0.1, 0.2, 0.4, 0.8, 1.1, 1.2, 1.2, 1.2, 1.2, 1.2, 1.2, 1.2, 1.2, 1.2, 1.2, 1.2, 1.2],
+        constrictions: [
+            { index: 26, diameter: 0.0, fricative: 0.0 } // Complete closure at alveolar/postalveolar region
+        ],
+        voiced: true,
+        isStop: true,
+        timing: {
+            silenceBeforeBurst: 20,
+            burstDuration: 20,
+            sustainDuration: 200
+        },
+        // After burst, transition to fricative
+        afterBurstConstrictions: [
+            { index: 26, diameter: 0.1, fricative: 1.0 } // Fricative constriction after burst
+        ]
     }
 };
 
@@ -368,6 +590,19 @@ export function getPhonemeConfig(name, tractSize) {
         });
     }
     
+    // Add after-burst constrictions for affricates if they exist
+    if (phoneme.afterBurstConstrictions) {
+        // Scale the constriction indices to match the target tract size
+        config.afterBurstConstrictions = phoneme.afterBurstConstrictions.map(constriction => {
+            const scaledIndex = Math.floor((constriction.index / phoneme.diameters.length) * tractSize);
+            return {
+                index: scaledIndex,
+                diameter: constriction.diameter,
+                fricative: constriction.fricative
+            };
+        });
+    }
+    
     // Copy voiced property if it exists
     if (phoneme.voiced !== undefined) {
         config.voiced = phoneme.voiced;
@@ -376,6 +611,20 @@ export function getPhonemeConfig(name, tractSize) {
     // Copy stop/plosive properties if they exist
     if (phoneme.isStop !== undefined) {
         config.isStop = phoneme.isStop;
+    }
+    
+    // Copy approximant property if it exists
+    if (phoneme.approximant !== undefined) {
+        config.approximant = phoneme.approximant;
+    }
+    
+    // Copy nasal properties if they exist
+    if (phoneme.nasal !== undefined) {
+        config.nasal = phoneme.nasal;
+    }
+    
+    if (phoneme.velumOpening !== undefined) {
+        config.velumOpening = phoneme.velumOpening;
     }
     
     // Copy timing parameters if they exist

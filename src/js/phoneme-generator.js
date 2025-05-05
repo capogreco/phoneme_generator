@@ -250,7 +250,7 @@ export class PhonemeGenerator {
             this.setVoiced(config.voiced);
         }
         
-        // Add any constrictions for fricatives or stops
+        // Add any constrictions for fricatives and stops
         if (config.constrictions && config.constrictions.length > 0) {
             for (const constriction of config.constrictions) {
                 this.workletNode.port.postMessage({
@@ -262,13 +262,47 @@ export class PhonemeGenerator {
             }
         }
         
+        // Add after-burst constrictions for affricates
+        if (config.afterBurstConstrictions && config.afterBurstConstrictions.length > 0) {
+            for (const constriction of config.afterBurstConstrictions) {
+                this.workletNode.port.postMessage({
+                    type: 'add-after-burst-constriction',
+                    index: constriction.index,
+                    diameter: constriction.diameter,
+                    fricative: constriction.fricative
+                });
+            }
+        }
+        
+        // Handle nasal consonants
+        if (config.nasal && config.velumOpening !== undefined) {
+            this.workletNode.port.postMessage({
+                type: 'set-velum-opening',
+                velumOpening: config.velumOpening
+            });
+            console.log(`Setting nasal consonant ${name} with velum opening:`, config.velumOpening);
+        } else {
+            // Set default velum opening if not a nasal consonant
+            this.setVelum(0.01);
+        }
+        
+        // Handle approximants
+        if (config.approximant) {
+            this.workletNode.port.postMessage({
+                type: 'set-approximant',
+                isApproximant: true
+            });
+            console.log(`Setting approximant consonant ${name}`);
+        }
+        
         // Handle stop consonant timing
         if (config.isStop) {
             console.log(`Setting stop consonant ${name} with timing:`, config.timing);
             this.workletNode.port.postMessage({
                 type: 'set-stop-consonant',
                 isStop: true,
-                timing: config.timing
+                timing: config.timing,
+                afterBurstConstrictions: config.afterBurstConstrictions
             });
         } else {
             // Make sure to turn off stop consonant mode if not a stop
